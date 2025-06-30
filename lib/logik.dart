@@ -17,9 +17,3 @@ class KreuzungsZustand {
     required this.aktuellePhase,
   });
 }
-
-void aktuellePhase(naechstePhase) {
-  //ampelNord
-}
-
-void naechstePhase(aktuellePhase) {}

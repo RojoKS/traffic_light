@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:traffic_light/ampel.dart';
 import 'package:traffic_light/strasse.dart';
-import 'package:traffic_light/main.dart';
-import 'package:traffic_light/logik.dart';
 
 class Kreuzung extends StatefulWidget {
   const Kreuzung({super.key});
@@ -12,101 +10,52 @@ class Kreuzung extends StatefulWidget {
 }
 
 class _KreuzungState extends State<Kreuzung> {
-  void ampelSchalten() {
+  Ampel _schalteAmpel(Ampel ampel) {
+    return switch (ampel.lampe) {
+      Lampe.gruen => Ampel.gelb(
+        umgekehrt: ampel.umgekehrt,
+        anordnung: ampel.anordnung,
+      ),
+      Lampe.gelb => Ampel.rot(
+        umgekehrt: ampel.umgekehrt,
+        anordnung: ampel.anordnung,
+      ),
+      Lampe.rot => Ampel.rotgelb(
+        umgekehrt: ampel.umgekehrt,
+        anordnung: ampel.anordnung,
+      ),
+      Lampe.rotgelb => Ampel.gruen(
+        umgekehrt: ampel.umgekehrt,
+        anordnung: ampel.anordnung,
+      ),
+    };
+  }
+
+  void ampelnSchalten() {
     setState(() {
-      if (ampelNord.lampeGruen) {
-        ampelNord = Ampel.gelb();
-      } else if (ampelNord.lampeGelb && ampelNord.lampeRot) {
-        ampelNord = Ampel.gruen();
-      } else if (ampelNord.lampeRot) {
-        ampelNord = Ampel.rotgelb();
-      } else if (ampelNord.lampeGelb) {
-        ampelNord = Ampel.rot();
-      }
-
-      if (ampelSued.lampeGruen) {
-        ampelSued = Ampel.gelb(
-          umgekehrt: ampelSued.umgekehrt,
-        );
-      } else if (ampelSued.lampeGelb && ampelSued.lampeRot) {
-        ampelSued = Ampel.gruen(
-          umgekehrt: ampelSued.umgekehrt,
-        );
-      } else if (ampelSued.lampeRot) {
-        ampelSued = Ampel.rotgelb(
-          umgekehrt: ampelSued.umgekehrt,
-        );
-      } else if (ampelSued.lampeGelb) {
-        ampelSued = Ampel.rot(
-          umgekehrt: ampelSued.umgekehrt,
-        );
-      }
-
-      if (ampelWest.lampeRot) {
-        ampelWest = Ampel.gelb(
-          anordnung: ampelWest.anordnung,
-        );
-      } else if (ampelWest.lampeGelb) {
-        ampelWest = Ampel.rotgelb(
-          anordnung: ampelWest.anordnung,
-        );
-      } else if (ampelWest.lampeGelb && ampelWest.lampeRot) {
-        ampelWest = Ampel.rot(
-          anordnung: ampelWest.anordnung,
-        );
-      } else if (ampelWest.lampeGruen) {
-        ampelWest = Ampel.gruen(
-          anordnung: ampelWest.anordnung,
-        );
-      }
-
-      if (ampelOst.lampeRot) {
-        ampelOst = Ampel.gelb(
-          anordnung: ampelOst.anordnung,
-          umgekehrt: ampelOst.umgekehrt,
-        );
-      } else if (ampelOst.lampeGelb) {
-        ampelOst = Ampel.rotgelb(
-          anordnung: ampelOst.anordnung,
-          umgekehrt: ampelOst.umgekehrt,
-        );
-      } else if (ampelOst.lampeGelb && ampelOst.lampeRot) {
-        ampelOst = Ampel.rot(
-          anordnung: ampelOst.anordnung,
-          umgekehrt: ampelOst.umgekehrt,
-        );
-      } else if (ampelOst.lampeGruen) {
-        ampelOst = Ampel.gruen(
-          anordnung: ampelOst.anordnung,
-          umgekehrt: ampelOst.umgekehrt,
-        );
-      }
+      ampelNord = _schalteAmpel(ampelNord);
+      ampelSued = _schalteAmpel(ampelSued);
+      ampelOst = _schalteAmpel(ampelOst);
+      ampelWest = _schalteAmpel(ampelWest);
     });
   }
 
-  // ampel farben(welche an sind und welche aus.. noch statisch)
+  // ampel farben default wert(welche an sind und welche aus.. noch statisch)
   Ampel ampelNord = Ampel(
-    lampeRot: true,
-    lampeGelb: false,
-    lampeGruen: false,
+    lampe: Lampe.rot,
     anordnung: Axis.vertical,
+    umgekehrt: true,
   );
   Ampel ampelSued = Ampel(
-    lampeRot: true,
-    lampeGelb: false,
-    lampeGruen: false,
+    lampe: Lampe.rot,
     anordnung: Axis.vertical,
   );
   Ampel ampelOst = Ampel(
-    lampeRot: false,
-    lampeGelb: false,
-    lampeGruen: true,
+    lampe: Lampe.gruen,
     anordnung: Axis.horizontal,
   );
   Ampel ampelWest = Ampel(
-    lampeRot: false,
-    lampeGelb: false,
-    lampeGruen: true,
+    lampe: Lampe.gruen,
     anordnung: Axis.horizontal,
     umgekehrt: true,
   );
@@ -140,13 +89,78 @@ class _KreuzungState extends State<Kreuzung> {
           right: screenWidth * 0.228,
           child: ampelOst,
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
+        Positioned(
+          top: screenHeight * 0.185,
+          left: screenWidth * 0.44,
+          child: Container(
+            width: 40,
+            height: 70,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 37, 170, 159),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Icon(
+              Icons.arrow_downward_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: screenHeight * 0.185,
+          right: screenWidth * 0.44,
+          child: Container(
+            width: 40,
+            height: 70,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 179, 0, 0),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Icon(
+              Icons.arrow_upward_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: screenHeight * 0.44,
+          left: screenWidth * 0.185,
+          child: Container(
+            width: 70,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 74, 185, 77),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Positioned(
+          top: screenHeight * 0.44,
+          right: screenWidth * 0.185,
+          child: Container(
+            width: 70,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 35, 14, 112),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Icon(
+              Icons.arrow_back_rounded,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Positioned(
+          top: 40,
+          ,
           child: ElevatedButton.icon(
             onPressed: () {
-              ampelSchalten();
+              ampelnSchalten();
             },
-            icon: Icon(Icons.business),
+            icon: Icon(Icons.timer),
             label: Text('Ampel starten'),
           ),
         ),

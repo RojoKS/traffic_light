@@ -1,51 +1,45 @@
 import 'package:flutter/material.dart';
 
+enum Lampe {
+  gruen,
+  gelb,
+  rot,
+  rotgelb,
+}
+
 class Ampel extends StatelessWidget {
   const Ampel({
-    this.lampeRot = false,
-    this.lampeGelb = false,
-    this.lampeGruen = false,
-    this.anordnung = Axis.horizontal,
-    this.umgekehrt = true,
+    required this.lampe,
+    required this.anordnung,
+    this.umgekehrt = false,
     super.key,
   });
 
   const Ampel.rot({
-    this.lampeRot = true,
-    this.lampeGelb = false,
-    this.lampeGruen = false,
-    this.anordnung = Axis.vertical,
+    required this.anordnung,
     this.umgekehrt = false,
     super.key,
-  });
-  const Ampel.rotgelb({
-    this.lampeRot = true,
-    this.lampeGelb = true,
-    this.lampeGruen = false,
-    this.anordnung = Axis.vertical,
-    this.umgekehrt = false,
-    super.key,
-  });
-  const Ampel.gruen({
-    this.lampeRot = false,
-    this.lampeGelb = false,
-    this.lampeGruen = true,
-    this.anordnung = Axis.vertical,
-    this.umgekehrt = true,
-    super.key,
-  });
-  const Ampel.gelb({
-    this.lampeRot = false,
-    this.lampeGelb = true,
-    this.lampeGruen = false,
-    this.anordnung = Axis.vertical,
-    this.umgekehrt = false,
-    super.key,
-  });
+  }) : lampe = Lampe.rot;
 
-  final bool lampeRot;
-  final bool lampeGelb;
-  final bool lampeGruen;
+  const Ampel.rotgelb({
+    required this.anordnung,
+    this.umgekehrt = false,
+    super.key,
+  }) : lampe = Lampe.rotgelb;
+
+  const Ampel.gruen({
+    required this.anordnung,
+    this.umgekehrt = false,
+    super.key,
+  }) : lampe = Lampe.gruen;
+
+  const Ampel.gelb({
+    required this.anordnung,
+    this.umgekehrt = false,
+    super.key,
+  }) : lampe = Lampe.gelb;
+
+  final Lampe lampe;
   final Axis anordnung;
   final bool umgekehrt;
 
@@ -67,7 +61,9 @@ class Ampel extends StatelessWidget {
           height: screenHeight * 0.062,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: lampeRot ? Colors.red : Colors.black,
+            color: lampe == Lampe.rot || lampe == Lampe.rotgelb
+                ? Colors.red
+                : Colors.black,
           ),
         ),
         Container(
@@ -75,7 +71,9 @@ class Ampel extends StatelessWidget {
           height: screenHeight * 0.062,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: lampeGelb ? Colors.yellow : Colors.black,
+            color: lampe == Lampe.gelb || lampe == Lampe.rotgelb
+                ? Colors.yellow
+                : Colors.black,
           ),
         ),
         Container(
@@ -83,7 +81,7 @@ class Ampel extends StatelessWidget {
           height: screenHeight * 0.062,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: lampeGruen ? Colors.green : Colors.black,
+            color: lampe == Lampe.gruen ? Colors.green : Colors.black,
           ),
         ),
       ],
